@@ -3,6 +3,7 @@ const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../model/user");
 const { signup, login, handleGoogleCallback } = require("../controller/auth");
+const { signupValidator, loginValidator } = require("../middleware/validateAuth");
 
 const router = express.Router();
 
@@ -64,14 +65,12 @@ if (googleAuthConfigured) {
         )
     );
 }
-const { signup, login } = require("../controller/auth");
-const { signupValidator, loginValidator } = require("../middleware/validateAuth");
 
 router.get("/signup", (req, res) => {
-    res.render("signup");
+    res.render("signup", { error: null });
 });
 
-router.post("/signup", signup);
+router.post("/signup", signupValidator, signup);
 
 router.get("/login", (req, res) => {
     const errorMessages = {
@@ -84,8 +83,6 @@ router.get("/login", (req, res) => {
         googleAuthConfigured,
     });
 });
-
-router.post("/signup", signupValidator, signup);
 
 router.post("/login", loginValidator, login);
 
@@ -118,5 +115,4 @@ router.get("/logout", (req, res) => {
     res.redirect("/login");
 });
 
-module.exports = router;
 module.exports = router;
