@@ -7,6 +7,8 @@ const app = express();
 
 const connectDB = require("./conect");
 const authRoutes = require("./routes/auth");
+const collaborationRoutes = require('./routes/collaboration');
+const { acceptInvite, acceptInviteFromDashboard } = require('./controller/collaborationController');
 
 const dbConnection = connectDB();
 app.use(cookieParser());
@@ -24,6 +26,7 @@ const shortid = require('shortid');
 const multer = require('multer');
 const services = require('./services.config');
 const User = require('./model/user');
+const Invite = require('./model/invite');
 
 const port = process.env.PORT || 3000;
 const urlRoutes = require('./routes/url');
@@ -31,6 +34,9 @@ const urlRoutes = require('./routes/url');
 const suggestionRoutes = require('./routes/suggestionRoutes');
 // ... after your other app.use() lines:
 app.use('/suggestions', protect, suggestionRoutes);
+app.use('/services/creator-crm', protect, collaborationRoutes);
+app.post('/dashboard/accept-invite', protect, acceptInviteFromDashboard);
+app.get('/invites/accept/:token', acceptInvite);
 // In-memory "database" to store URLs.
 // Note: This data will be lost when the server restarts.
 const urlDatabase = new Map();
@@ -82,10 +88,20 @@ function buildAccountViewModel(userDoc, fallbackUser) {
 
 app.get("/dashboard", protect, async (req, res) => {
     const userDoc = await User.findById(req.user.id).select('name email').lean();
+    const invites = await Invite.find({ inviter: req.user.id }).lean();
+    const inviteSummary = {
+        total: invites.length,
+        pending: invites.filter((invite) => invite.status === 'pending').length,
+        accepted: invites.filter((invite) => invite.status === 'accepted').length,
+        expired: invites.filter((invite) => invite.status === 'expired').length,
+    };
 
     res.render("dashboard", {
         user: buildAccountViewModel(userDoc, req.user),
         services,
+        inviteSummary,
+        inviteAcceptMessage: null,
+        inviteAcceptError: null,
     });
 });
 
@@ -130,6 +146,11 @@ app.get('/services/:serviceKey', protect, (req, res) => {
     if (service.key === 'suggestion-tool') {
         return res.redirect('/suggestions');
     }
+
+    if (service.key === 'creator-crm') {
+        return res.redirect('/services/creator-crm');
+    }
+
     if (service.key === 'file-upload') {
         return res.render('file-upload');
     }
@@ -199,6 +220,9 @@ if (require.main === module) {
         });
     });
 }
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+});
 
 // Centralized error handler
 const errorHandler = require('./middleware/errorHandler');

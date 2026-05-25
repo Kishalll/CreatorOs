@@ -65,6 +65,8 @@ if (googleAuthConfigured) {
         )
     );
 }
+const { signup, login, loginAsContributor } = require("../controller/auth");
+const { signupValidator, loginValidator } = require("../middleware/validateAuth");
 
 router.get("/signup", (req, res) => {
     res.render("signup", { error: null });
@@ -109,6 +111,7 @@ router.get("/auth/google/callback", (req, res, next) => {
         session: false,
     })(req, res, next);
 }, handleGoogleCallback);
+router.post("/login/contributor", loginAsContributor);
 
 router.get("/logout", (req, res) => {
     res.clearCookie("token");
