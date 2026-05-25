@@ -1,7 +1,8 @@
 const crypto = require('crypto');
 const Invite = require('../model/invite');
 const User = require('../model/user');
-const services = require('../services.config');
+const Service = require('../model/service');
+const Url = require('../model/url');
 const { sendInvitationEmail } = require('../utils/email');
 
 function buildAccountViewModel(userDoc, fallbackUser) {
@@ -17,21 +18,23 @@ function buildAccountViewModel(userDoc, fallbackUser) {
     id: fallbackUser.id,
     name,
     email: userDoc?.email || '',
+    createdAt: userDoc?.createdAt,
     initials,
   };
 }
 
 const getCreatorCrmPage = async (req, res, next) => {
   try {
-    const userDoc = await User.findById(req.user.id).select('name email').lean();
-    const invites = await Invite.find({ inviter: req.user.id })
-      .sort({ createdAt: -1 })
-      .limit(12)
-      .lean();
+    const [userDoc, invites, services] = await Promise.all([
+      User.findById(req.user.id),
+      Invite.findByInviter(req.user.id, { limit: 12 }),
+      Service.findAll(),
+    ]);
 
     res.render('creator-crm', {
       user: buildAccountViewModel(userDoc, req.user),
       invites,
+      services,
       success: null,
       error: null,
     });
@@ -44,9 +47,15 @@ const sendCollaboratorInvite = async (req, res, next) => {
   const { email, projectName, message } = req.body || {};
 
   if (!email) {
+    const [userDoc, invites, services] = await Promise.all([
+      User.findById(req.user.id),
+      Invite.findByInviter(req.user.id, { limit: 12 }),
+      Service.findAll(),
+    ]);
     return res.status(400).render('creator-crm', {
-      user: buildAccountViewModel(await User.findById(req.user.id).select('name email').lean(), req.user),
-      invites: await Invite.find({ inviter: req.user.id }).sort({ createdAt: -1 }).limit(12).lean(),
+      user: buildAccountViewModel(userDoc, req.user),
+      invites,
+      services,
       success: null,
       error: 'Please provide an email address for the collaborator.',
     });
@@ -57,13 +66,13 @@ const sendCollaboratorInvite = async (req, res, next) => {
     const invite = await Invite.create({
       inviter: req.user.id,
       email: email.trim().toLowerCase(),
-      projectName: projectName?.trim() || 'CreatorOS Collaboration',
+      projectName: projectName?.trim() || process.env.DEFAULT_PROJECT_NAME || 'CreatorOS Collaboration',
       message: message?.trim(),
       token,
     });
 
     const inviteUrl = `${process.env.APP_URL || `${req.protocol}://${req.get('host')}`}/invites/accept/${token}`;
-    const userDoc = await User.findById(req.user.id).select('name email').lean();
+    const userDoc = await User.findById(req.user.id);
 
     await sendInvitationEmail({
       to: invite.email,
@@ -73,22 +82,30 @@ const sendCollaboratorInvite = async (req, res, next) => {
       personalMessage: invite.message,
     });
 
-    const invites = await Invite.find({ inviter: req.user.id }).sort({ createdAt: -1 }).limit(12).lean();
+    const [invites, services] = await Promise.all([
+      Invite.findByInviter(req.user.id, { limit: 12 }),
+      Service.findAll(),
+    ]);
     res.render('creator-crm', {
       user: buildAccountViewModel(userDoc, req.user),
       invites,
+      services,
       success: `Invite sent successfully to ${invite.email}.`,
       error: null,
     });
   } catch (error) {
     console.error('Collaborator invite failed:', error);
 
-    const userDoc = await User.findById(req.user.id).select('name email').lean();
-    const invites = await Invite.find({ inviter: req.user.id }).sort({ createdAt: -1 }).limit(12).lean();
+    const [userDoc, invites, services] = await Promise.all([
+      User.findById(req.user.id),
+      Invite.findByInviter(req.user.id, { limit: 12 }),
+      Service.findAll(),
+    ]);
 
     res.status(500).render('creator-crm', {
       user: buildAccountViewModel(userDoc, req.user),
       invites,
+      services,
       success: null,
       error: `Unable to send invite: ${error.message || 'Unexpected error'}`,
     });
@@ -96,19 +113,23 @@ const sendCollaboratorInvite = async (req, res, next) => {
 };
 
 const renderDashboard = async (req, res, options = {}) => {
-  const userDoc = await User.findById(req.user.id).select('name email').lean();
-  const invites = await Invite.find({ inviter: req.user.id }).lean();
-  const inviteSummary = {
-    total: invites.length,
-    pending: invites.filter((invite) => invite.status === 'pending').length,
-    accepted: invites.filter((invite) => invite.status === 'accepted').length,
-    expired: invites.filter((invite) => invite.status === 'expired').length,
-  };
+  const userDoc = await User.findById(req.user.id);
+  const services = await Service.findAll();
+  const inviteSummary = await Invite.summarizeByInviter(req.user.id);
+  const urlStats = await Url.dashboardStats(req.user.id);
+  const recentLinks = await Url.recentByUser(req.user.id, 5);
+  const clickSeries = await Url.clicksByDay(req.user.id, 7);
+  const topReferrers = await Url.topReferrers(req.user.id, 5);
 
   return res.render('dashboard', {
     user: buildAccountViewModel(userDoc, req.user),
     services,
     inviteSummary,
+    urlStats,
+    recentLinks,
+    clickSeries,
+    topReferrers,
+    appBaseUrl: process.env.APP_URL || `${req.protocol}://${req.get('host')}`,
     inviteAcceptMessage: options.inviteAcceptMessage || null,
     inviteAcceptError: options.inviteAcceptError || null,
   });
@@ -116,7 +137,7 @@ const renderDashboard = async (req, res, options = {}) => {
 
 const acceptInvite = async (req, res, next) => {
   try {
-    const invite = await Invite.findOne({ token: req.params.token });
+    const invite = await Invite.findByToken(req.params.token);
 
     if (!invite) {
       return res.status(404).render('invite-accept', {
@@ -132,13 +153,11 @@ const acceptInvite = async (req, res, next) => {
       });
     }
 
-    invite.status = 'accepted';
-    invite.acceptedAt = new Date();
-    await invite.save();
+    const acceptedInvite = await Invite.acceptByToken(req.params.token);
 
     res.render('invite-accept', {
       status: 'accepted',
-      invite,
+      invite: acceptedInvite,
     });
   } catch (error) {
     next(error);
@@ -153,7 +172,7 @@ const acceptInviteFromDashboard = async (req, res, next) => {
   }
 
   try {
-    const invite = await Invite.findOne({ token: inviteToken.trim() });
+    const invite = await Invite.findByToken(inviteToken.trim());
 
     if (!invite) {
       return renderDashboard(req, res, { inviteAcceptError: 'No invitation found for that token.' });
@@ -163,12 +182,10 @@ const acceptInviteFromDashboard = async (req, res, next) => {
       return renderDashboard(req, res, { inviteAcceptMessage: 'This invitation has already been accepted.' });
     }
 
-    invite.status = 'accepted';
-    invite.acceptedAt = new Date();
-    await invite.save();
+    const acceptedInvite = await Invite.acceptByToken(inviteToken.trim());
 
     return renderDashboard(req, res, {
-      inviteAcceptMessage: `Invitation for ${invite.email} was accepted successfully!`,
+      inviteAcceptMessage: `Invitation for ${acceptedInvite.email} was accepted successfully!`,
     });
   } catch (error) {
     console.error('Dashboard invite acceptance failed:', error);

@@ -1,10 +1,6 @@
 const User = require("../model/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
-
-const CONTRIBUTOR_EMAIL = "contributor@creatoros.local";
-const CONTRIBUTOR_NAME = "Contributor";
 
 function wantsHtml(req) {
     const accept = req.headers.accept || '';
@@ -36,7 +32,7 @@ const signup = async (req, res, next) => {
     try {
         const { name, email, password } = req.body || {};
 
-        const existingUser = await User.findOne({ email });
+        const existingUser = await User.findByEmail(email);
 
         if (existingUser) {
             if (wantsHtml(req)) {
@@ -54,7 +50,7 @@ const signup = async (req, res, next) => {
         });
 
         if (wantsHtml(req)) return res.redirect('/login');
-        return res.status(201).json({ success: true, data: { id: user._id, email: user.email } });
+        return res.status(201).json({ success: true, data: { id: user.id, email: user.email } });
     } catch (error) {
         next(error);
     }
@@ -64,7 +60,7 @@ const login = async (req, res, next) => {
     try {
         const { email, password } = req.body || {};
 
-        const user = await User.findOne({ email });
+        const user = await User.findByEmail(email);
 
         const genericMessage = 'Invalid email or password';
 
@@ -80,7 +76,7 @@ const login = async (req, res, next) => {
             return res.status(401).json({ success: false, message: genericMessage });
         }
 
-        const token = createToken(user._id);
+        const token = createToken(user.id);
 
         setAuthCookie(res, token);
 
@@ -91,34 +87,7 @@ const login = async (req, res, next) => {
     }
 };
 
-const loginAsContributor = async (req, res, next) => {
-    try {
-        let user = await User.findOne({ email: CONTRIBUTOR_EMAIL });
-
-        if (!user) {
-            const randomPassword = crypto.randomUUID();
-            const hashedPassword = await bcrypt.hash(randomPassword, 10);
-
-            user = await User.create({
-                name: CONTRIBUTOR_NAME,
-                email: CONTRIBUTOR_EMAIL,
-                password: hashedPassword,
-            });
-        }
-
-        const token = createToken(user._id);
-
-        setAuthCookie(res, token);
-
-        if (wantsHtml(req)) return res.redirect('/dashboard');
-        return res.status(200).json({ success: true, message: 'Authenticated as contributor' });
-    } catch (error) {
-        next(error);
-    }
-};
-
 module.exports = {
     signup,
     login,
-    loginAsContributor,
 };

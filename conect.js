@@ -1,12 +1,12 @@
-const mongoose = require("mongoose");
+const { pool } = require('./db/pool');
 
 const connectDB = async () => {
     try {
-        await mongoose.connect(process.env.MONGODB_URI);
+        await pool.query('SELECT 1');
 
-        console.log("MongoDB Connected");
+        console.log("PostgreSQL Connected");
     } catch (error) {
-        console.log("MongoDB Connection Error:", error);
+        console.log("PostgreSQL Connection Error:", error);
         process.exit(1);
     }
 };
