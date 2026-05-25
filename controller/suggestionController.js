@@ -1,14 +1,61 @@
-const suggestions = require('../model/suggestionData');
-const services = require('../services.config');
+const Suggestion = require('../model/suggestion');
+const Service = require('../model/service');
+const User = require('../model/user');
 
-exports.getPage = (req, res) => {
-  const categories = Object.keys(suggestions);
-  res.render('suggestions', { categories, result: null, selected: null, services });
+function buildAccountViewModel(userDoc, fallbackUser) {
+  const name = userDoc?.name || 'Creator';
+  const initials = name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0].toUpperCase())
+    .join('') || 'CR';
+
+  return {
+    id: fallbackUser.id,
+    name,
+    email: userDoc?.email || '',
+    createdAt: userDoc?.createdAt,
+    initials,
+  };
+}
+
+exports.getPage = async (req, res, next) => {
+  try {
+    const [categories, services, userDoc] = await Promise.all([
+      Suggestion.getCategories(),
+      Service.findAll(),
+      User.findById(req.user.id),
+    ]);
+    res.render('suggestions', {
+      categories,
+      result: null,
+      selected: null,
+      services,
+      user: buildAccountViewModel(userDoc, req.user),
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-exports.getSuggestions = (req, res) => {
-  const { category } = req.body;
-  const categories = Object.keys(suggestions);
-  const result = suggestions[category] || null;
-  res.render('suggestions', { categories, result, selected: category, services });
+exports.getSuggestions = async (req, res, next) => {
+  try {
+    const { category } = req.body;
+    const [categories, services, result, userDoc] = await Promise.all([
+      Suggestion.getCategories(),
+      Service.findAll(),
+      Suggestion.getSuggestionsByCategory(category),
+      User.findById(req.user.id),
+    ]);
+    res.render('suggestions', {
+      categories,
+      result,
+      selected: category,
+      services,
+      user: buildAccountViewModel(userDoc, req.user),
+    });
+  } catch (error) {
+    next(error);
+  }
 };

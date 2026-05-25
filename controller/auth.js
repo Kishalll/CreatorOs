@@ -21,7 +21,7 @@ function isGoogleAuthConfigured() {
     );
 }
 
-function createAuthToken(userId) {
+function createToken(userId) {
     return jwt.sign(
         {
             id: userId,
@@ -36,8 +36,8 @@ function createAuthToken(userId) {
 function setAuthCookie(res, token) {
     res.cookie("token", token, {
         httpOnly: true,
-        sameSite: "lax",
         secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
         maxAge: ONE_WEEK_MS,
     });
 }
@@ -62,17 +62,17 @@ const signup = async (req, res, next) => {
         const { name, email, password } = req.body || {};
         const normalizedEmail = email.toLowerCase().trim();
 
-        const existingUser = await User.findOne({ email: normalizedEmail });
+        const existingUser = await User.findByEmail(normalizedEmail);
 
         if (existingUser) {
             if (wantsHtml(req)) {
                 return res.status(409).render("signup", { error: "User already exists" });
             }
-
             return res.status(409).json({ success: false, message: "User already exists" });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
+
         const user = await User.create({
             name,
             email: normalizedEmail,
@@ -80,11 +80,8 @@ const signup = async (req, res, next) => {
             authProvider: "local",
         });
 
-        if (wantsHtml(req)) {
-            return res.redirect("/login");
-        }
-
-        return res.status(201).json({ success: true, data: { id: user._id, email: user.email } });
+        if (wantsHtml(req)) return res.redirect("/login");
+        return res.status(201).json({ success: true, data: { id: user.id, email: user.email } });
     } catch (error) {
         return next(error);
     }
@@ -93,8 +90,7 @@ const signup = async (req, res, next) => {
 const login = async (req, res, next) => {
     try {
         const { email, password } = req.body || {};
-        const normalizedEmail = email.toLowerCase().trim();
-        const user = await User.findOne({ email: normalizedEmail });
+        const user = await User.findByEmail(email);
 
         if (!user || !user.password) {
             return renderLoginError(req, res);
@@ -106,16 +102,12 @@ const login = async (req, res, next) => {
             return renderLoginError(req, res);
         }
 
-        user.lastLoginAt = new Date();
-        await user.save();
+        await User.touchLastLogin(user.id);
+        const token = createToken(user.id);
 
-        const token = createAuthToken(user._id);
         setAuthCookie(res, token);
 
-        if (wantsHtml(req)) {
-            return res.redirect("/dashboard");
-        }
-
+        if (wantsHtml(req)) return res.redirect("/dashboard");
         return res.status(200).json({ success: true, message: "Authenticated" });
     } catch (error) {
         return next(error);
@@ -128,7 +120,7 @@ const handleGoogleCallback = async (req, res) => {
             return redirectWithLoginError(res, "Google sign-in was cancelled or could not be completed.");
         }
 
-        const token = createAuthToken(req.user._id);
+        const token = createToken(req.user.id);
         setAuthCookie(res, token);
 
         return res.redirect("/dashboard?login=google");
@@ -140,7 +132,7 @@ const handleGoogleCallback = async (req, res) => {
 
 const loginAsContributor = async (req, res, next) => {
     try {
-        let user = await User.findOne({ email: CONTRIBUTOR_EMAIL });
+        let user = await User.findByEmail(CONTRIBUTOR_EMAIL);
 
         if (!user) {
             const randomPassword = crypto.randomUUID();
@@ -154,16 +146,11 @@ const loginAsContributor = async (req, res, next) => {
             });
         }
 
-        user.lastLoginAt = new Date();
-        await user.save();
-
-        const token = createAuthToken(user._id);
+        await User.touchLastLogin(user.id);
+        const token = createToken(user.id);
         setAuthCookie(res, token);
 
-        if (wantsHtml(req)) {
-            return res.redirect("/dashboard");
-        }
-
+        if (wantsHtml(req)) return res.redirect("/dashboard");
         return res.status(200).json({ success: true, message: "Authenticated as contributor" });
     } catch (error) {
         return next(error);

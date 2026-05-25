@@ -37,19 +37,20 @@ if (googleAuthConfigured) {
                         lastLoginAt: new Date(),
                     };
 
-                    let user = await User.findOne({ googleId: profile.id });
+                    let user = await User.findByGoogleId(profile.id);
 
                     if (!user) {
-                        user = await User.findOne({ email });
+                        user = await User.findByEmail(email);
                     }
 
                     if (user) {
-                        user.googleId = googleUser.googleId;
-                        user.name = user.name || googleUser.name;
-                        user.avatar = googleUser.avatar || user.avatar;
-                        user.authProvider = user.password ? user.authProvider : "google";
-                        user.lastLoginAt = googleUser.lastLoginAt;
-                        await user.save();
+                        user = await User.updateGoogleProfile(user.id, {
+                            googleId: googleUser.googleId,
+                            name: user.name || googleUser.name,
+                            avatar: googleUser.avatar,
+                            authProvider: user.password ? user.authProvider : "google",
+                            lastLoginAt: googleUser.lastLoginAt,
+                        });
                     } else {
                         user = await User.create({
                             ...googleUser,
@@ -70,8 +71,6 @@ router.get("/signup", (req, res) => {
     res.render("signup", { error: null });
 });
 
-router.post("/signup", signupValidator, signup);
-
 router.get("/login", (req, res) => {
     const errorMessages = {
         google_cancelled: "Google sign-in was cancelled.",
@@ -84,6 +83,7 @@ router.get("/login", (req, res) => {
     });
 });
 
+router.post("/signup", signupValidator, signup);
 router.post("/login", loginValidator, login);
 router.post("/login/contributor", loginAsContributor);
 

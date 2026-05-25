@@ -83,9 +83,9 @@
       </a>
       <div class="nav-group">
         <div class="sidebar-label">Services</div>
-        <a class="nav-link" href="/services/creator-crm">Creator CRM</a>
-        <a class="nav-link" href="/services/url-shortener">URL Shortener</a>
-        <a class="nav-link" href="/services/suggestion-tool">Caption Tool</a>
+        <% services.forEach(function(service) { %>
+          <a class="nav-link <%= service.key === 'creator-crm' ? 'active' : '' %>" href="<%= service.route %>"><%= service.name %></a>
+        <% }) %>
       </div>
       <div class="nav-group">
         <div class="sidebar-label">Account</div>
