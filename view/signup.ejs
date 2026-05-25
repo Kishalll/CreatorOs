@@ -159,16 +159,6 @@
             filter: brightness(1.03);
         }
 
-        .auth-error {
-            margin: 0 0 1rem;
-            border: 1px solid rgba(248, 113, 113, 0.38);
-            border-radius: 1rem;
-            padding: 0.85rem 1rem;
-            color: #fecaca;
-            background: rgba(127, 29, 29, 0.22);
-            line-height: 1.5;
-        }
-
         .switch-link {
             margin: 1.4rem 0 0;
             color: var(--muted);
@@ -196,10 +186,6 @@
 
             <h1>Create account</h1>
             <p class="subtitle">Join CreatorOS and start using the creator tools built for fast, clean workflows.</p>
-
-            <% if (typeof error !== 'undefined' && error) { %>
-                <p class="auth-error" role="alert"><%= error %></p>
-            <% } %>
 
             <form action="/signup" method="POST">
                 <input type="text" name="name" placeholder="Name" required>

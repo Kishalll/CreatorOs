@@ -8,7 +8,6 @@ async function handleGenerateShortUrl(req, res) {
     const ShortId= shortid();
     
     await Url.create({
-        userId: req.user?.id,
         shortId: ShortId,
         redirectUrl: body.redirectUrl,
     });
@@ -18,11 +17,14 @@ async function handleGenerateShortUrl(req, res) {
 
 async function handleGetAnalytics(req, res) {
     const shortId = req.params.shortId;
-    const analytics = await Url.analyticsByShortId(shortId);
-    if (!analytics) {
+    const entry = await Url.findOne({ shortId: shortId });
+    if (!entry) {
         return res.status(404).json({ error: "Short URL not found" });
     }
-    return res.json(analytics);
+    return res.json({
+        totalClicks: entry.totalClicks,
+        analytics: entry.createdAt
+    });
 }
 
 

@@ -46,7 +46,7 @@ Thank you for wanting to contribute to CreatorOS! We're excited to have you help
 ### Requirements
 - **Node.js**: 18 or higher
 - **npm**: 9 or higher
-- **PostgreSQL**: Running locally or available through a hosted connection string
+- **MongoDB**: Running locally (or use MongoDB Atlas)
 
 ### Installation
 ```bash
@@ -54,11 +54,11 @@ Thank you for wanting to contribute to CreatorOS! We're excited to have you help
 npm install
 
 # Setup environment
-cp .env.example .env
-# Edit .env with your settings
+cp .env.example .env.local
+# Edit .env.local with your settings
 
 # Start development server
-npm start
+npm run dev
 ```
 
 ### Running Tests
@@ -297,7 +297,7 @@ Real-world use cases:
 - [GitHub Guides](https://guides.github.com/)
 - [Node.js Documentation](https://nodejs.org/docs/)
 - [Express.js Guide](https://expressjs.com/)
-- [PostgreSQL Docs](https://www.postgresql.org/docs/)
+- [MongoDB Docs](https://docs.mongodb.com/)
 
 ### Community
 - 💬 GitHub Issues - Ask questions

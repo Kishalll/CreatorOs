@@ -62,7 +62,7 @@ const signup = async (req, res, next) => {
         const { name, email, password } = req.body || {};
         const normalizedEmail = email.toLowerCase().trim();
 
-        const existingUser = await User.findByEmail(normalizedEmail);
+        const existingUser = await User.findOne({ email: normalizedEmail });
 
         if (existingUser) {
             if (wantsHtml(req)) {
@@ -81,7 +81,7 @@ const signup = async (req, res, next) => {
         });
 
         if (wantsHtml(req)) return res.redirect("/login");
-        return res.status(201).json({ success: true, data: { id: user.id, email: user.email } });
+        return res.status(201).json({ success: true, data: { id: user._id, email: user.email } });
     } catch (error) {
         return next(error);
     }
@@ -90,7 +90,8 @@ const signup = async (req, res, next) => {
 const login = async (req, res, next) => {
     try {
         const { email, password } = req.body || {};
-        const user = await User.findByEmail(email);
+        const normalizedEmail = email.toLowerCase().trim();
+        const user = await User.findOne({ email: normalizedEmail });
 
         if (!user || !user.password) {
             return renderLoginError(req, res);
@@ -102,9 +103,10 @@ const login = async (req, res, next) => {
             return renderLoginError(req, res);
         }
 
-        await User.touchLastLogin(user.id);
-        const token = createToken(user.id);
+        user.lastLoginAt = new Date();
+        await user.save();
 
+        const token = createToken(user._id);
         setAuthCookie(res, token);
 
         if (wantsHtml(req)) return res.redirect("/dashboard");
@@ -120,7 +122,7 @@ const handleGoogleCallback = async (req, res) => {
             return redirectWithLoginError(res, "Google sign-in was cancelled or could not be completed.");
         }
 
-        const token = createToken(req.user.id);
+        const token = createToken(req.user._id);
         setAuthCookie(res, token);
 
         return res.redirect("/dashboard?login=google");
@@ -132,7 +134,7 @@ const handleGoogleCallback = async (req, res) => {
 
 const loginAsContributor = async (req, res, next) => {
     try {
-        let user = await User.findByEmail(CONTRIBUTOR_EMAIL);
+        let user = await User.findOne({ email: CONTRIBUTOR_EMAIL });
 
         if (!user) {
             const randomPassword = crypto.randomUUID();
@@ -146,8 +148,10 @@ const loginAsContributor = async (req, res, next) => {
             });
         }
 
-        await User.touchLastLogin(user.id);
-        const token = createToken(user.id);
+        user.lastLoginAt = new Date();
+        await user.save();
+
+        const token = createToken(user._id);
         setAuthCookie(res, token);
 
         if (wantsHtml(req)) return res.redirect("/dashboard");

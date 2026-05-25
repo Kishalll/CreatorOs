@@ -129,10 +129,10 @@ Never stare at a blank screen again.
 
 | Layer | Technology |
 |-------|-----------|
-| **Frontend** | ![EJS](https://img.shields.io/badge/EJS-8A2BE2?style=flat-square) ![TailwindCSS](https://img.shields.io/badge/Tailwind-06B6D4?logo=tailwindcss&logoColor=white&style=flat-square) |
+| **Frontend** | ![Next.js](https://img.shields.io/badge/Next.js-000?logo=nextdotjs&logoColor=white&style=flat-square) ![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black&style=flat-square) ![TailwindCSS](https://img.shields.io/badge/Tailwind-06B6D4?logo=tailwindcss&logoColor=white&style=flat-square) |
 | **Backend** | ![Node.js](https://img.shields.io/badge/Node.js-339933?logo=nodedotjs&logoColor=white&style=flat-square) ![Express](https://img.shields.io/badge/Express-000?logo=express&logoColor=white&style=flat-square) |
-| **Database** | ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white&style=flat-square) |
-| **Auth** | ![JWT](https://img.shields.io/badge/JWT-000000?logo=jsonwebtokens&logoColor=white&style=flat-square) |
+| **Database** | ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white&style=flat-square) ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?logo=mongodb&logoColor=white&style=flat-square) |
+| **Auth** | ![Clerk](https://img.shields.io/badge/Clerk-6C47FF?logo=clerk&logoColor=white&style=flat-square) ![Firebase](https://img.shields.io/badge/Firebase-FFCA28?logo=firebase&logoColor=black&style=flat-square) |
 | **Automation** | ![Instagram](https://img.shields.io/badge/Instagram%20Graph%20API-E4405F?logo=instagram&logoColor=white&style=flat-square) |
 | **AI** | ![OpenAI](https://img.shields.io/badge/OpenAI-412991?logo=openai&logoColor=white&style=flat-square) ![OpenRouter](https://img.shields.io/badge/OpenRouter-FF6B35?style=flat-square) |
 | **Hosting** | ![Vercel](https://img.shields.io/badge/Vercel-000?logo=vercel&logoColor=white&style=flat-square) ![Railway](https://img.shields.io/badge/Railway-0B0D0E?logo=railway&logoColor=white&style=flat-square) ![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?logo=supabase&logoColor=white&style=flat-square) |
@@ -168,6 +168,11 @@ cp .env.example .env.local
 
 ### Environment Setup
 
+> [!IMPORTANT]
+> The following variables are **strictly required** to run the application:
+> 1. **`MONGODB_URI`**: Required to connect to your database. Without this, the app cannot store user accounts or persistent data.
+> 2. **`JWT_SECRET`**: Required for security. It's used to sign the tokens that keep users logged in.
+
 ```env
 # Auth
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
@@ -175,7 +180,7 @@ CLERK_SECRET_KEY=
 
 # Database
 DATABASE_URL=
-DATABASE_SSL=false
+MONGODB_URI=
 
 # Instagram Graph API
 INSTAGRAM_APP_ID=
@@ -192,10 +197,8 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 ### Run Locally
 
 ```bash
-# Start the development server
-npm run migrate
-npm run seed
-npm start
+# Create the required local env file, then start the development server
+npm run dev
 
 # Open in browser
 open http://localhost:3000
@@ -207,13 +210,20 @@ open http://localhost:3000
 
 ```
 CreatorOs/
-├── 📂 controller/             # Express route handlers
-├── 📂 db/                     # PostgreSQL pool, migrations, seed data
-├── 📂 middleware/             # Auth, validation, and error handling
-├── 📂 model/                  # PostgreSQL query modules
-├── 📂 routes/                 # Express routers
-├── 📂 utils/                  # Shared utilities
-└── 📂 view/                   # EJS views
+├── 📂 app/                    # Next.js App Router
+│   ├── 📂 (auth)/             # Auth pages (login, signup)
+│   ├── 📂 (dashboard)/        # Main dashboard routes
+│   │   ├── 📂 bio/            # Smart Bio System
+│   │   ├── 📂 automation/     # DM Automation
+│   │   ├── 📂 crm/            # Creator CRM
+│   │   ├── 📂 analytics/      # Analytics Dashboard
+│   │   └── 📂 content/        # Content OS
+│   └── 📂 api/                # API Routes
+├── 📂 components/             # Reusable UI components
+├── 📂 lib/                    # Utility functions & configs
+├── 📂 hooks/                  # Custom React hooks
+├── 📂 prisma/                 # DB schema & migrations
+└── 📂 public/                 # Static assets
 ```
 
 ---
