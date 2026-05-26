@@ -151,54 +151,7 @@ const suggestions = {
       { title: "Not Afraid – Eminem", mood: "courageous" },
       { title: "Unstoppable – Sia", mood: "fearless" }
     ]
-  },
-    gaming: {
-    captions: [
-      "Just one more game, I promise! 🎮",
-      "Eat. Sleep. Game. Repeat. 🕹️",
-      "Leveling up my life one day at a time.",
-      "In a world full of glitches, be a pro gamer 🚀",
-      "Gamer mode: ON. Do not disturb 🤫"
-    ],
-    hashtags: [
-      "#gaming", "#gamer", "#gamingcommunity",
-      "#pcgaming", "#streamer", "#twitch",
-      "#gameplay", "#xbox", "#playstation"
-    ],
-    songs: [
-      { title: "Legends Never Die – League of Legends", mood: "epic" },
-      { title: "Enemy – Imagine Dragons", mood: "hype" },
-      { title: "First Class – Jack Harlow", mood: "chill" },
-      { title: "Industry Baby – Lil Nas X", mood: "energetic" },
-      { title: "Alone – Marshmello", mood: "gaming vibes" }
-    ]
-  },
- 
-  finance: {
-    captions: [
-      "Don't work for money, make your money work for you 💸",
-      "Invest in yourself first 📈",
-      "Financial freedom is the ultimate goal 🎯",
-      "Smart saving today leads to better living tomorrow 🏦",
-      "Mindset rich, pocket wealth ✨"
-    ],
-    hashtags: [
-      "#finance", "#money", "#investing",
-      "#stocks", "#crypto", "#wealth",
-      "#personalfinance", "#savings", "#entrepreneur"
-    ],
-    songs: [
-      { title: "Money – Pink Floyd", mood: "classic" },
-      { title: "Rich Flex – Drake & 21 Savage", mood: "flex" },
-      { title: "Billionaire – Travie McCoy ft. Bruno Mars", mood: "dreamy" },
-      { title: "Money – LISA", mood: "confident" },
-      { title: "Can't Buy Me Love – The Beatles", mood: "happy" }
-    ]
-  },
+ const Suggestion = mongoose.model('Suggestion', suggestionSchema);
+module.exports = Suggestion;
 
-
-  }
-};
- 
-module.exports = suggestions;
  
