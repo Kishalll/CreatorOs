@@ -137,12 +137,10 @@ const acceptInvite = async (req, res, next) => {
       });
     }
 
-    invite.status = 'accepted';
-    invite.acceptedAt = new Date();
-    await invite.save();
-
+    // Don't auto-accept anymore if unauthenticated.
+    // Just render the pending state so they can copy the token and login.
     res.render('invite-accept', {
-      status: 'accepted',
+      status: 'pending',
       invite,
     });
   } catch (error) {
@@ -168,12 +166,26 @@ const acceptInviteFromDashboard = async (req, res, next) => {
       return renderDashboard(req, res, { inviteAcceptMessage: 'This invitation has already been accepted.' });
     }
 
+    // Accept the invite
     invite.status = 'accepted';
     invite.acceptedAt = new Date();
     await invite.save();
 
+    // Link the accounts: Add the current user to the inviter's collaborators
+    const inviter = await User.findById(invite.inviter);
+    if (inviter) {
+      if (!inviter.collaborators) inviter.collaborators = [];
+      
+      // Ensure we don't push duplicates
+      const isAlreadyCollaborator = inviter.collaborators.some(id => id.toString() === req.user.id.toString());
+      if (!isAlreadyCollaborator) {
+        inviter.collaborators.push(req.user.id);
+        await inviter.save();
+      }
+    }
+
     return renderDashboard(req, res, {
-      inviteAcceptMessage: `Invitation for ${invite.email} was accepted successfully!`,
+      inviteAcceptMessage: `Invitation for ${invite.email} was accepted successfully! You are now a collaborator.`,
     });
   } catch (error) {
     console.error('Dashboard invite acceptance failed:', error);

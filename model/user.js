@@ -18,6 +18,11 @@ const userSchema = new mongoose.Schema(
         type: String,
         required: true,
         },
+        
+        collaborators: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+        }],
     },
     {
         timestamps: true,
@@ -35,6 +40,7 @@ class MockUserModel {
         this.name = data.name;
         this.email = data.email;
         this.password = data.password;
+        this.collaborators = data.collaborators || [];
         this.createdAt = new Date();
         this.updatedAt = new Date();
     }
@@ -94,7 +100,7 @@ class MockUserModel {
     mockUsers.push({
         _id: "mock-test-user-id",
         name: "Test User",
-        email: "test@local",
+        email: "test@local.com",
         password: hashed,
         createdAt: new Date(),
         updatedAt: new Date()
