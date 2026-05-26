@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | CreatorOS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --bg: #06101f;
@@ -28,7 +30,9 @@
             --sidebar-width: 280px;
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             margin: 0;
@@ -42,7 +46,9 @@
             overflow-x: hidden;
         }
 
-        a { color: inherit; }
+        a {
+            color: inherit;
+        }
 
         .dashboard-layout {
             min-height: 100vh;
@@ -163,7 +169,7 @@
             padding-inline: 0;
         }
 
-        .dashboard-layout.sidebar-collapsed .brand > span:not(.brand-mark),
+        .dashboard-layout.sidebar-collapsed .brand>span:not(.brand-mark),
         .dashboard-layout.sidebar-collapsed .sidebar-label,
         .dashboard-layout.sidebar-collapsed .service-name {
             display: none;
@@ -330,9 +336,17 @@
             transition: transform 0.18s ease, box-shadow 0.18s ease;
         }
 
-        .stat-card:nth-child(2) { animation-delay: 0.05s; }
-        .stat-card:nth-child(3) { animation-delay: 0.1s; }
-        .stat-card:nth-child(4) { animation-delay: 0.15s; }
+        .stat-card:nth-child(2) {
+            animation-delay: 0.05s;
+        }
+
+        .stat-card:nth-child(3) {
+            animation-delay: 0.1s;
+        }
+
+        .stat-card:nth-child(4) {
+            animation-delay: 0.15s;
+        }
 
         .stat-card:hover {
             transform: translateY(-4px);
@@ -348,10 +362,25 @@
             border-radius: 0.8rem;
         }
 
-        .stat-icon.purple { color: #67e8f9; background: rgba(34, 211, 238, 0.12); }
-        .stat-icon.blue { color: #38bdf8; background: rgba(56, 189, 248, 0.12); }
-        .stat-icon.green { color: #86efac; background: rgba(34, 197, 94, 0.12); }
-        .stat-icon.orange { color: #fcd34d; background: rgba(245, 158, 11, 0.14); }
+        .stat-icon.purple {
+            color: #67e8f9;
+            background: rgba(34, 211, 238, 0.12);
+        }
+
+        .stat-icon.blue {
+            color: #38bdf8;
+            background: rgba(56, 189, 248, 0.12);
+        }
+
+        .stat-icon.green {
+            color: #86efac;
+            background: rgba(34, 197, 94, 0.12);
+        }
+
+        .stat-icon.orange {
+            color: #fcd34d;
+            background: rgba(245, 158, 11, 0.14);
+        }
 
         .stat-content h3 {
             margin: 0 0 0.45rem;
@@ -491,9 +520,17 @@
             letter-spacing: -0.02em;
         }
 
-        .status-card.pending { color: #facc15; }
-        .status-card.accepted { color: #22c55e; }
-        .status-card.expired { color: #f87171; }
+        .status-card.pending {
+            color: #facc15;
+        }
+
+        .status-card.accepted {
+            color: #22c55e;
+        }
+
+        .status-card.expired {
+            color: #f87171;
+        }
 
         .select-pill {
             border: 1px solid var(--border);
@@ -686,18 +723,37 @@
         }
 
         @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-18px); }
-            to { opacity: 1; transform: translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateX(-18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         @keyframes enterUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @media (max-width: 1120px) {
@@ -730,7 +786,7 @@
                 border-bottom-color: transparent;
             }
 
-            .dashboard-layout.sidebar-collapsed .sidebar > * {
+            .dashboard-layout.sidebar-collapsed .sidebar>* {
                 opacity: 0;
                 pointer-events: none;
             }
@@ -781,8 +837,187 @@
                 display: none;
             }
         }
+/* ===== LIGHT MODE ===== */
+
+body.light-mode {
+    background: #f4f7fb;
+    color: #111827;
+}
+
+/* Sidebar */
+body.light-mode .sidebar {
+    background: #ffffff;
+    border-right: 1px solid #e5e7eb;
+}
+
+/* Top Navbar */
+body.light-mode .topbar,
+body.light-mode .dashboard-header {
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+/* Main Dashboard Area */
+body.light-mode .dashboard-main,
+body.light-mode .dashboard-content {
+    background: #f4f7fb;
+}
+
+/* Cards */
+body.light-mode .stat-card,
+body.light-mode .invite-status,
+body.light-mode .chart-card,
+body.light-mode .dashboard-card,
+body.light-mode .analytics-card {
+    background: #ffffff;
+    color: #111827;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+/* Links */
+body.light-mode .nav-link {
+    color: #111827;
+}
+
+/* Active Link */
+body.light-mode .nav-link.active {
+    background: linear-gradient(90deg, #38bdf8, #22d3ee);
+    color: white;
+}
+
+/* Labels */
+body.light-mode .sidebar-label {
+    color: #6b7280;
+}
+
+/* Text */
+body.light-mode h1,
+body.light-mode h2,
+body.light-mode h3,
+body.light-mode h4,
+body.light-mode p,
+body.light-mode span {
+    color: #111827;
+}
+
+/* Buttons */
+body.light-mode button {
+    color: #111827;
+}
+
+/* Service Cards */
+body.light-mode .service-card {
+    background: #ecfeff;
+    border: 1px solid #cffafe;
+}
+
+/* Invite Section */
+body.light-mode .panel {
+    background: #ffffff;
+    color:#06101f;
+}
+
+/* Dropdowns */
+body.light-mode select {
+    background: white;
+    color: black;
+    border: 1px solid #d1d5db;
+}
+/* Invite Status Section */
+body.light-mode .invite-status-section,
+body.light-mode .invite-container,
+body.light-mode .invite-card,
+body.light-mode .invite-status {
+    background: #ffffff !important;
+    color: #111827 !important;
+    border: 1px solid #e5e7eb;
+}
+
+/* Clicks Overview */
+body.light-mode .clicks-overview,
+body.light-mode .chart-container,
+body.light-mode .chart-card,
+body.light-mode .overview-card {
+    background: #ffffff !important;
+    color: #111827 !important;
+    border: 1px solid #e5e7eb;
+}
+
+/* Accept Invitation Section */
+body.light-mode .accept-invitation,
+body.light-mode .team-card {
+    background: #ffffff !important;
+    color: #111827 !important;
+    border: 1px solid #e5e7eb;
+}
+.theme-btn{
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+
+    background: #ffffff20;
+    backdrop-filter: blur(10px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: all 0.3s ease;
+}
+.theme-btn:hover{
+    transform: scale(1.08);
+}
+/* Recent Links Panel */
+body.light-mode #recent-links {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+/* Table Heading */
+body.light-mode #recent-links th {
+    color: #374151;
+    font-weight: 600;
+}
+
+/* Table Data */
+body.light-mode #recent-links td {
+    color: #111827;
+}
+
+/* Short URL */
+body.light-mode #recent-links .short-url {
+    color: #06b6d4;
+    font-weight: 600;
+}
+
+/* View all links */
+body.light-mode #recent-links .table-head a {
+    color: #06b6d4;
+    font-weight: 600;
+}
+
+/* Icons */
+body.light-mode #recent-links .row-action {
+    color: #4b5563;
+}
+
+/* Row Hover */
+body.light-mode #recent-links tbody tr:hover {
+    background: #f9fafb;
+}
+
+/* Table Border */
+body.light-mode #recent-links tbody tr {
+    border-bottom: 1px solid #e5e7eb;
+}
     </style>
 </head>
+
 <body>
     <div class="dashboard-layout" id="dashboardLayout">
         <aside class="sidebar" aria-label="Dashboard navigation">
@@ -794,6 +1029,7 @@
                     </svg>
                 </span>
                 <span>CREATOROS</span>
+                <button id="theme-toggle" class="theme-btn">🌙</button>
             </a>
 
             <nav class="sidebar-section">
@@ -826,7 +1062,9 @@
                 <a class="nav-link" href="#settings">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
                         <path d="M12 15.5A3.5 3.5 0 1 0 12 8a3.5 3.5 0 0 0 0 7.5Z"></path>
-                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 .6 1.65 1.65 0 0 0-.33 1.82V22a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 20.4a1.65 1.65 0 0 0-1.82-.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-.6-1 1.65 1.65 0 0 0-1.82-.33H2a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 3.6 9c.14-.66-.07-1.35-.6-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6c.66-.14 1.35.07 1.82.6V5a2 2 0 0 1 4 0v.09A1.65 1.65 0 0 0 15 3.6c.66.14 1.35-.07 1.82-.6l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.14.66.07 1.35-.6 1.82H20a2 2 0 0 1 0 4h-.09A1.65 1.65 0 0 0 19.4 15Z"></path>
+                        <path
+                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 .6 1.65 1.65 0 0 0-.33 1.82V22a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 20.4a1.65 1.65 0 0 0-1.82-.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-.6-1 1.65 1.65 0 0 0-1.82-.33H2a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 3.6 9c.14-.66-.07-1.35-.6-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6c.66-.14 1.35.07 1.82.6V5a2 2 0 0 1 4 0v.09A1.65 1.65 0 0 0 15 3.6c.66.14 1.35-.07 1.82-.6l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.14.66.07 1.35-.6 1.82H20a2 2 0 0 1 0 4h-.09A1.65 1.65 0 0 0 19.4 15Z">
+                        </path>
                     </svg>
                     Settings
                 </a>
@@ -834,15 +1072,18 @@
 
             <nav class="sidebar-section" aria-label="Services">
                 <p class="sidebar-label">Services</p>
-                <% services.forEach((service) => { %>
-                    <a class="service-link <%= service.status %>" href="<%= service.route %>" title="<%= service.name %>">
+                <% services.forEach((service)=> { %>
+                    <a class="service-link <%= service.status %>" href="<%= service.route %>"
+                        title="<%= service.name %>">
                         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
                             <path d="M12 3v18"></path>
                             <path d="M3 12h18"></path>
                         </svg>
-                        <span class="service-name"><%= service.name %></span>
+                        <span class="service-name">
+                            <%= service.name %>
+                        </span>
                     </a>
-                <% }) %>
+                    <% }) %>
             </nav>
 
             <div class="sidebar-footer">
@@ -859,7 +1100,8 @@
 
         <main class="main">
             <header class="topbar">
-                <button class="menu-btn" type="button" aria-label="Toggle sidebar" aria-expanded="true" id="sidebarToggle">
+                <button class="menu-btn" type="button" aria-label="Toggle sidebar" aria-expanded="true"
+                    id="sidebarToggle">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
                         <path d="M4 6h16"></path>
                         <path d="M4 12h16"></path>
@@ -869,8 +1111,12 @@
 
                 <div class="topbar-actions">
                     <a class="profile-chip" href="/profile" aria-label="Open profile">
-                        <span class="avatar"><%= user.initials %></span>
-                        <span class="profile-name"><%= user.name %></span>
+                        <span class="avatar">
+                            <%= user.initials %>
+                        </span>
+                        <span class="profile-name">
+                            <%= user.name %>
+                        </span>
                     </a>
                     <a class="icon-btn" href="/logout" aria-label="Logout" title="Logout">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
@@ -965,15 +1211,21 @@
                     <div class="status-grid">
                         <div class="status-card pending">
                             <h3>Pending</h3>
-                            <p><%= inviteSummary ? inviteSummary.pending : 0 %></p>
+                            <p>
+                                <%= inviteSummary ? inviteSummary.pending : 0 %>
+                            </p>
                         </div>
                         <div class="status-card accepted">
                             <h3>Accepted</h3>
-                            <p><%= inviteSummary ? inviteSummary.accepted : 0 %></p>
+                            <p>
+                                <%= inviteSummary ? inviteSummary.accepted : 0 %>
+                            </p>
                         </div>
                         <div class="status-card expired">
                             <h3>Expired</h3>
-                            <p><%= inviteSummary ? inviteSummary.expired : 0 %></p>
+                            <p>
+                                <%= inviteSummary ? inviteSummary.expired : 0 %>
+                            </p>
                         </div>
                     </div>
                 </section>
@@ -1001,8 +1253,11 @@
                                 <text class="chart-y" x="24" y="152">200</text>
                                 <text class="chart-y" x="24" y="212">100</text>
                                 <text class="chart-y" x="36" y="262">0</text>
-                                <path class="chart-area" d="M90 208 L190 182 L290 122 L390 164 L490 62 L590 142 L690 92 L690 250 L90 250 Z"></path>
-                                <path class="chart-line" d="M90 208 L190 182 L290 122 L390 164 L490 62 L590 142 L690 92"></path>
+                                <path class="chart-area"
+                                    d="M90 208 L190 182 L290 122 L390 164 L490 62 L590 142 L690 92 L690 250 L90 250 Z">
+                                </path>
+                                <path class="chart-line"
+                                    d="M90 208 L190 182 L290 122 L390 164 L490 62 L590 142 L690 92"></path>
                                 <circle class="chart-dot" cx="90" cy="208" r="6"></circle>
                                 <circle class="chart-dot" cx="190" cy="182" r="6"></circle>
                                 <circle class="chart-dot" cx="290" cy="122" r="6"></circle>
@@ -1024,19 +1279,25 @@
                     <section class="panel invite-panel">
                         <div class="panel-head">
                             <h2>Accept an invitation</h2>
-                            <span style="display:inline-flex; align-items:center; gap:0.35rem; padding:0.55rem 0.85rem; border-radius:999px; background: rgba(34,211,238,0.12); color:#67e8f9; font-weight:700; font-size:0.85rem;">Team</span>
+                            <span
+                                style="display:inline-flex; align-items:center; gap:0.35rem; padding:0.55rem 0.85rem; border-radius:999px; background: rgba(34,211,238,0.12); color:#67e8f9; font-weight:700; font-size:0.85rem;">Team</span>
                         </div>
                         <p>Have an invite token? Paste it below to accept your collaboration invite into CreatorOS.</p>
                         <% if (inviteAcceptMessage) { %>
-                            <div class="message-box message-success"><%= inviteAcceptMessage %></div>
-                        <% } %>
-                        <% if (inviteAcceptError) { %>
-                            <div class="message-box message-error"><%= inviteAcceptError %></div>
-                        <% } %>
-                        <form class="invite-form" action="/dashboard/accept-invite" method="POST">
-                            <input type="text" name="inviteToken" placeholder="Invite token" required autocomplete="off" />
-                            <button type="submit">Accept invite</button>
-                        </form>
+                            <div class="message-box message-success">
+                                <%= inviteAcceptMessage %>
+                            </div>
+                            <% } %>
+                                <% if (inviteAcceptError) { %>
+                                    <div class="message-box message-error">
+                                        <%= inviteAcceptError %>
+                                    </div>
+                                    <% } %>
+                                        <form class="invite-form" action="/dashboard/accept-invite" method="POST">
+                                            <input type="text" name="inviteToken" placeholder="Invite token" required
+                                                autocomplete="off" />
+                                            <button type="submit">Accept invite</button>
+                                        </form>
                     </section>
 
                     <section class="panel">
@@ -1046,11 +1307,17 @@
                         <div class="donut-layout">
                             <div class="donut" aria-label="Top referrers chart"></div>
                             <div class="legend">
-                                <div class="legend-row"><span class="legend-dot" style="background:#22d3ee"></span><span>Direct</span><strong>65%</strong></div>
-                                <div class="legend-row"><span class="legend-dot" style="background:#38bdf8"></span><span>Google</span><strong>20%</strong></div>
-                                <div class="legend-row"><span class="legend-dot" style="background:#22c55e"></span><span>Twitter</span><strong>7%</strong></div>
-                                <div class="legend-row"><span class="legend-dot" style="background:#f59e0b"></span><span>Instagram</span><strong>5%</strong></div>
-                                <div class="legend-row"><span class="legend-dot" style="background:#64748b"></span><span>Others</span><strong>3%</strong></div>
+                                <div class="legend-row"><span class="legend-dot"
+                                        style="background:#22d3ee"></span><span>Direct</span><strong>65%</strong></div>
+                                <div class="legend-row"><span class="legend-dot"
+                                        style="background:#38bdf8"></span><span>Google</span><strong>20%</strong></div>
+                                <div class="legend-row"><span class="legend-dot"
+                                        style="background:#22c55e"></span><span>Twitter</span><strong>7%</strong></div>
+                                <div class="legend-row"><span class="legend-dot"
+                                        style="background:#f59e0b"></span><span>Instagram</span><strong>5%</strong>
+                                </div>
+                                <div class="legend-row"><span class="legend-dot"
+                                        style="background:#64748b"></span><span>Others</span><strong>3%</strong></div>
                             </div>
                         </div>
                     </section>
@@ -1081,10 +1348,18 @@
                                     <td>
                                         <div class="row-actions">
                                             <a class="row-action" href="#analytics" aria-label="View analytics">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19V5"></path><path d="M9 19v-6"></path><path d="M14 19V9"></path><path d="M19 19V3"></path></svg>
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                    <path d="M4 19V5"></path>
+                                                    <path d="M9 19v-6"></path>
+                                                    <path d="M14 19V9"></path>
+                                                    <path d="M19 19V3"></path>
+                                                </svg>
                                             </a>
                                             <a class="row-action" href="/services/url-shortener" aria-label="Edit link">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                    <path d="M12 20h9"></path>
+                                                    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                                                </svg>
                                             </a>
                                         </div>
                                     </td>
@@ -1097,10 +1372,18 @@
                                     <td>
                                         <div class="row-actions">
                                             <a class="row-action" href="#analytics" aria-label="View analytics">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19V5"></path><path d="M9 19v-6"></path><path d="M14 19V9"></path><path d="M19 19V3"></path></svg>
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                    <path d="M4 19V5"></path>
+                                                    <path d="M9 19v-6"></path>
+                                                    <path d="M14 19V9"></path>
+                                                    <path d="M19 19V3"></path>
+                                                </svg>
                                             </a>
                                             <a class="row-action" href="/services/url-shortener" aria-label="Edit link">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                    <path d="M12 20h9"></path>
+                                                    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                                                </svg>
                                             </a>
                                         </div>
                                     </td>
@@ -1113,10 +1396,18 @@
                                     <td>
                                         <div class="row-actions">
                                             <a class="row-action" href="#analytics" aria-label="View analytics">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19V5"></path><path d="M9 19v-6"></path><path d="M14 19V9"></path><path d="M19 19V3"></path></svg>
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                    <path d="M4 19V5"></path>
+                                                    <path d="M9 19v-6"></path>
+                                                    <path d="M14 19V9"></path>
+                                                    <path d="M19 19V3"></path>
+                                                </svg>
                                             </a>
                                             <a class="row-action" href="/services/url-shortener" aria-label="Edit link">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                    <path d="M12 20h9"></path>
+                                                    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                                                </svg>
                                             </a>
                                         </div>
                                     </td>
@@ -1143,6 +1434,33 @@
             sidebarToggle.setAttribute('aria-expanded', String(!isCollapsed));
             localStorage.setItem('creatorosSidebarCollapsed', String(isCollapsed));
         });
+        
+const toggleBtn = document.getElementById("theme-toggle");
+
+toggleBtn.addEventListener("click", () => {
+    document.body.classList.toggle("light-mode");
+
+    if(document.body.classList.contains("light-mode")){
+        localStorage.setItem("theme", "light");
+        toggleBtn.innerText = "🌙";
+    } else {
+        localStorage.setItem("theme", "dark");
+        toggleBtn.innerText = "☀️";
+    }
+});
+
+window.onload = () => {
+    const savedTheme = localStorage.getItem("theme");
+
+    if(savedTheme === "light"){
+        document.body.classList.add("light-mode");
+        toggleBtn.innerText = "🌙";
+    } else {
+        toggleBtn.innerText = "☀️";
+    }
+}
+
     </script>
 </body>
+
 </html>
