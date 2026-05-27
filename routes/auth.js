@@ -24,9 +24,6 @@ if (googleAuthConfigured) {
             async (accessToken, refreshToken, profile, done) => {
                 try {
                     await connectDB();
-                    if (process.env.USE_MOCK_DB === "true") {
-                        delete require.cache[require.resolve("../model/user")];
-                    }
                     const User = require("../model/user");
                     const email = profile.emails?.[0]?.value?.toLowerCase();
 

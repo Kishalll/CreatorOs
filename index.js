@@ -105,7 +105,7 @@ function buildShortenerViewModel(req, shortId = null, error = null) {
 }
 
 function buildAccountViewModel(userDoc, fallbackUser) {
-    const name = userDoc?.name || 'Creator';
+    const name = userDoc?.name || fallbackUser?.name || 'Creator';
     const initials = name
         .split(' ')
         .filter(Boolean)
@@ -116,27 +116,42 @@ function buildAccountViewModel(userDoc, fallbackUser) {
     return {
         id: fallbackUser.id,
         name,
-        email: userDoc?.email || '',
+        email: userDoc?.email || fallbackUser?.email || '',
         initials,
     };
 }
 
-app.get("/dashboard", protect, async (req, res) => {
-    const userDoc = await User.findById(req.user.id).select('name email').lean();
-    
-    const [pending, accepted, expired] = await Promise.all([
-        Invite.countDocuments({ inviter: req.user.id, status: 'pending' }),
-        Invite.countDocuments({ inviter: req.user.id, status: 'accepted' }),
-        Invite.countDocuments({ inviter: req.user.id, status: 'expired' })
-    ]);
-    
-    const inviteSummary = {
-        total: pending + accepted + expired,
-        pending,
-        accepted,
-        expired,
-    };
+function isGuestContributor(user) {
+    return user?.role === 'guest_contributor';
+}
 
+function buildEmptyInviteSummary() {
+    return {
+        total: 0,
+        pending: 0,
+        accepted: 0,
+        expired: 0,
+    };
+}
+
+app.get("/dashboard", protect, async (req, res) => {
+    const userDoc = isGuestContributor(req.user)
+        ? null
+        : await User.findById(req.user.id).select('name email').lean();
+    
+    const inviteSummary = isGuestContributor(req.user)
+        ? buildEmptyInviteSummary()
+        : await Promise.all([
+            Invite.countDocuments({ inviter: req.user.id, status: 'pending' }),
+            Invite.countDocuments({ inviter: req.user.id, status: 'accepted' }),
+            Invite.countDocuments({ inviter: req.user.id, status: 'expired' })
+        ]).then(([pending, accepted, expired]) => ({
+            total: pending + accepted + expired,
+            pending,
+            accepted,
+            expired,
+        }));
+    
     res.render("dashboard", {
         user: buildAccountViewModel(userDoc, req.user),
         services,
@@ -147,7 +162,9 @@ app.get("/dashboard", protect, async (req, res) => {
 });
 
 app.get("/profile", protect, async (req, res) => {
-    const userDoc = await User.findById(req.user.id).select('name email').lean();
+    const userDoc = isGuestContributor(req.user)
+        ? null
+        : await User.findById(req.user.id).select('name email').lean();
 
     res.render("profile", { user: buildAccountViewModel(userDoc, req.user) });
 });

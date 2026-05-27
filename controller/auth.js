@@ -3,16 +3,13 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const connectDB = require("../connect");
 
-const CONTRIBUTOR_EMAIL = "contributor@creatoros.local";
 const CONTRIBUTOR_NAME = "Contributor";
 const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+const GUEST_CONTRIBUTOR_ROLE = "guest_contributor";
 const GENERIC_LOGIN_ERROR = "Invalid email or password";
 
 async function getUserModel() {
     await connectDB();
-    if (process.env.USE_MOCK_DB === "true") {
-        delete require.cache[require.resolve("../model/user")];
-    }
     return require("../model/user");
 }
 
@@ -43,6 +40,21 @@ function createToken(user) {
 
     return jwt.sign(
         tokenUser,
+        process.env.JWT_SECRET,
+        {
+            expiresIn: "7d",
+        }
+    );
+}
+
+function createContributorToken(session) {
+    return jwt.sign(
+        {
+            id: session.contributorId,
+            sessionId: session._id.toString(),
+            name: CONTRIBUTOR_NAME,
+            role: GUEST_CONTRIBUTOR_ROLE,
+        },
         process.env.JWT_SECRET,
         {
             expiresIn: "7d",
@@ -155,36 +167,28 @@ const handleGoogleCallback = async (req, res) => {
 
 const loginAsContributor = async (req, res, next) => {
     try {
-        const User = await getUserModel();
-
-        let user = await User.findOne({ email: CONTRIBUTOR_EMAIL });
-
-        if (!user) {
-            const randomPassword = crypto.randomUUID();
-            const hashedPassword = await bcrypt.hash(randomPassword, 10);
-
-            user = await User.create({
-                name: CONTRIBUTOR_NAME,
-                email: CONTRIBUTOR_EMAIL,
-                password: hashedPassword,
-                authProvider: "local",
-                role: "contributor",
-            });
-        } else if (user.role !== "contributor") {
-            user.role = "contributor";
-        }
-
-        user.lastLoginAt = new Date();
-        await user.save();
-
-        const token = createToken(user);
+        await connectDB();
+        const ContributorSession = require("../model/contributorSession");
+        const contributorId = crypto.randomUUID();
+        const expiresAt = new Date(Date.now() + ONE_WEEK_MS);
+        const session = await ContributorSession.create({
+            contributorId,
+            role: GUEST_CONTRIBUTOR_ROLE,
+            expiresAt,
+        });
+        const user = {
+            id: contributorId,
+            name: CONTRIBUTOR_NAME,
+            role: GUEST_CONTRIBUTOR_ROLE,
+        };
+        const token = createContributorToken(session);
         setAuthCookie(res, token);
 
         if (wantsHtml(req)) return res.redirect("/dashboard");
         return res.status(200).json({
             success: true,
             token,
-            user: serializeUser(user),
+            user,
         });
     } catch (error) {
         return next(error);

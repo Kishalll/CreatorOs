@@ -15,6 +15,15 @@ const protect = async (req, res, next) => {
 
         await connectDB();
 
+        if (decoded.role === "guest_contributor") {
+            const ContributorSession = require("../model/contributorSession");
+            const session = await ContributorSession.findOne({ contributorId: decoded.id });
+
+            if (!session) {
+                return res.redirect("/login");
+            }
+        }
+
         req.user = decoded;
 
         next();
@@ -32,7 +41,7 @@ const requireAdmin = (req, res, next) => {
 };
 
 const preventContributorWrites = (req, res, next) => {
-    if (req.user.role === "contributor") {
+    if (req.user.role === "contributor" || req.user.role === "guest_contributor") {
         return res.status(403).json({
             success: false,
             message: "Contributor accounts do not have permission to modify data.",

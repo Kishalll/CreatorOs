@@ -16,11 +16,6 @@ const userSchema = new mongoose.Schema(
             trim: true,
         },
 
-        Email: {
-            type: String,
-            select: false,
-        },
-
         password: {
             type: String,
             required: function () {
@@ -64,14 +59,6 @@ const userSchema = new mongoose.Schema(
     }
 );
 
-userSchema.pre("save", function (next) {
-    if (this.email) {
-        this.Email = this.email;
-    }
-
-    next();
-});
-
 const MongooseUserModel = mongoose.models.User || mongoose.model("User", userSchema);
 
 // In-memory mock storage
@@ -82,7 +69,6 @@ class MockUserModel {
         this._id = data._id || new mongoose.Types.ObjectId().toString();
         this.name = data.name;
         this.email = data.email;
-        this.Email = data.Email || data.email;
         this.password = data.password;
         this.role = data.role || "creator";
         this.authProvider = data.authProvider || "local";
